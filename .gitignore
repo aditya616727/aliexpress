@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+output/
+data/
+debug_page.html
+scraper_debug.html
+*.egg-info/
+dist/
+build/
+.pytest_cache/
