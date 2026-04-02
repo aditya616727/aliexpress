@@ -104,7 +104,7 @@ def product_to_clothing_doc(product):
         "country": "China",
         "state": "",
         "city": "",
-        "address": "",
+        "address": product.get("product_url", ""),
         "images": images,
         "discountPercentage": discount,
         "gender": attrs["gender"],
@@ -112,6 +112,7 @@ def product_to_clothing_doc(product):
         "season": attrs.get("season", ""),
         "features": [],
         "variants": [],
+        "productUrl": product.get("product_url", ""),
     }
 
     # Add original price as a variant if different from sale price
