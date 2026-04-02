@@ -32,6 +32,40 @@ EMPTY_PRODUCT = {
 class AliExpressScraper(BaseScraper):
     """Scrapes product listings from AliExpress search results using Playwright."""
 
+    _CHALLENGE_MARKERS = ["_____tmd_____", "punish", "x5secdata", "baxia-dialog", "captcha"]
+
+    def _is_challenge_page(self, page):
+        """Detect if AliExpress served an anti-bot challenge instead of results."""
+        url = page.url
+        if "_____tmd_____" in url or "punish" in url:
+            logger.warning(f"Challenge detected in URL: {url[:120]}")
+            return True
+        html = page.content()
+        for marker in self._CHALLENGE_MARKERS:
+            if marker in html:
+                logger.warning(f"Challenge marker '{marker}' found in page HTML")
+                return True
+        return False
+
+    def _warm_up(self, context):
+        """Visit the AliExpress homepage first to establish cookies/session."""
+        page = context.new_page()
+        try:
+            logger.info("Warming up: visiting AliExpress homepage...")
+            page.goto("https://www.aliexpress.com", wait_until="domcontentloaded", timeout=30000)
+            page.wait_for_timeout(random.randint(2000, 4000))
+            # Dismiss any popups
+            for sel in ["button[class*='close']", "[class*='popup'] button", ".next-dialog-close"]:
+                try:
+                    page.click(sel, timeout=1000)
+                except Exception:
+                    pass
+            page.wait_for_timeout(1000)
+        except Exception as e:
+            logger.debug(f"Warm-up navigation failed (non-fatal): {e}")
+        finally:
+            page.close()
+
     def _build_search_url(self, query, page=1):
         encoded_query = quote_plus(query)
         url = settings.search_url.format(query=encoded_query)
@@ -39,57 +73,104 @@ class AliExpressScraper(BaseScraper):
             url += f"?page={page}&SearchText={encoded_query}"
         return url
 
-    def _fetch_page(self, url):
-        """Fetch a page using Playwright browser with stealth."""
-        context = self._create_context()
-        page = context.new_page()
+    def _fetch_page(self, url, retries=3):
+        """Fetch a page using Playwright browser with stealth and retry.
 
-        try:
-            logger.info(f"Navigating to: {url}")
+        Detects challenge/captcha pages and retries with a fresh context.
+        """
+        for attempt in range(1, retries + 1):
+            context = self._create_context()
+
             try:
-                page.goto(url, wait_until="networkidle", timeout=60000)
-            except Exception:
-                logger.info("networkidle timed out, falling back to domcontentloaded")
-                page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                # Warm up on first attempt to establish cookies
+                if attempt == 1:
+                    self._warm_up(context)
 
-            # Wait extra for JS to render product cards
-            page.wait_for_timeout(10000)
+                page = context.new_page()
+                logger.info(f"Navigating to: {url} (attempt {attempt}/{retries})")
 
-            # Wait for product cards to appear (try multiple selectors)
-            selectors_to_try = [
-                "div[class*='search-item-card-wrapper-gallery']",
-                "a.search-card-item",
-                "a[href*='/item/']",
-                "div[class*='gallery']",
-            ]
-
-            loaded = False
-            for sel in selectors_to_try:
                 try:
-                    page.wait_for_selector(sel, timeout=5000)
-                    loaded = True
-                    logger.info(f"Products loaded with selector: {sel}")
-                    break
+                    page.goto(url, wait_until="networkidle", timeout=60000)
                 except Exception:
-                    continue
+                    logger.info("networkidle timed out, falling back to domcontentloaded")
+                    page.goto(url, wait_until="domcontentloaded", timeout=60000)
 
-            if not loaded:
-                logger.info("No specific selector matched, waiting extra time for JS...")
-                page.wait_for_timeout(5000)
+                # Check for challenge page early
+                if self._is_challenge_page(page):
+                    logger.warning(f"Challenge page on attempt {attempt}/{retries}")
+                    context.close()
+                    if attempt < retries:
+                        # Close browser entirely to get fresh fingerprint
+                        self._close_browser()
+                        backoff = 10 * attempt + random.uniform(3, 8)
+                        logger.info(f"Restarting browser, retrying in {backoff:.1f}s...")
+                        time.sleep(backoff)
+                        continue
+                    else:
+                        logger.error("All attempts hit challenge page")
+                        return None
 
-            # Scroll down to trigger lazy loading of more products
-            for _ in range(4):
-                page.evaluate("window.scrollBy(0, window.innerHeight)")
-                page.wait_for_timeout(2000)
+                # Wait for JS to render product cards
+                page.wait_for_timeout(random.randint(5000, 8000))
 
-            html = page.content()
-            return html
+                # Wait for product cards to appear (try multiple selectors)
+                selectors_to_try = [
+                    "div[class*='search-item-card-wrapper-gallery']",
+                    "a.search-card-item",
+                    "a[href*='/item/']",
+                    "div[class*='gallery']",
+                ]
 
-        except Exception as e:
-            logger.error(f"Failed to fetch page: {e}")
-            return None
-        finally:
-            context.close()
+                loaded = False
+                for sel in selectors_to_try:
+                    try:
+                        page.wait_for_selector(sel, timeout=5000)
+                        loaded = True
+                        logger.info(f"Products loaded with selector: {sel}")
+                        break
+                    except Exception:
+                        continue
+
+                if not loaded:
+                    # Check again — maybe it turned into a challenge after JS ran
+                    if self._is_challenge_page(page):
+                        logger.warning(f"Late challenge detected on attempt {attempt}/{retries}")
+                        context.close()
+                        if attempt < retries:
+                            self._close_browser()
+                            backoff = 10 * attempt + random.uniform(3, 8)
+                            logger.info(f"Restarting browser, retrying in {backoff:.1f}s...")
+                            time.sleep(backoff)
+                            continue
+                        else:
+                            logger.error("All attempts hit challenge page")
+                            return None
+                    logger.info("No product selector matched, waiting extra time for JS...")
+                    page.wait_for_timeout(5000)
+
+                # Scroll down to trigger lazy loading of more products
+                for _ in range(4):
+                    page.evaluate("window.scrollBy(0, window.innerHeight)")
+                    page.wait_for_timeout(random.randint(1500, 2500))
+
+                html = page.content()
+                return html
+
+            except Exception as e:
+                logger.error(f"Attempt {attempt}/{retries} failed: {e}")
+                if attempt < retries:
+                    self._close_browser()
+                    backoff = 5 * attempt + random.uniform(1, 5)
+                    logger.info(f"Retrying in {backoff:.1f}s...")
+                    time.sleep(backoff)
+                else:
+                    logger.error(f"All {retries} attempts failed for: {url}")
+                    return None
+            finally:
+                try:
+                    context.close()
+                except Exception:
+                    pass
 
     def _extract_products_from_html(self, html):
         """Extract products from the rendered HTML using multiple strategies."""

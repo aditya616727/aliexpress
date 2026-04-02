@@ -8,12 +8,17 @@ services:
       - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
       - HEADLESS=true
+      - CHROME_SANDBOX=false
+      - PYTHONUNBUFFERED=1
       - PROXY_SERVER=${PROXY_SERVER}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - MAX_PAGES=${MAX_PAGES:-5}
       - DELAY_MIN=${DELAY_MIN:-2}
       - DELAY_MAX=${DELAY_MAX:-5}
       - MAX_CONCURRENT_UPLOADS=${MAX_CONCURRENT_UPLOADS:-5}
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     ports:
       - "8000:8000"
     volumes:
