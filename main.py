@@ -8,6 +8,7 @@ import argparse
 import logging
 import sys
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from scraper import AliExpressScraper
 from exporter import DataExporter
@@ -70,17 +71,64 @@ def parse_args():
     return parser.parse_args()
 
 
+def _task_images_and_db(products, output_dir, upload_cloudflare, store_db):
+    """Pipeline: download images -> upload to Cloudflare -> delete local -> store in MongoDB.
+
+    MongoDB runs after Cloudflare so documents contain Cloudflare image URLs.
+    """
+    logger = logging.getLogger(__name__)
+
+    # Download images locally
+    logger.info("[images+db] Downloading product images...")
+    image_dir = os.path.join(output_dir, "images") if output_dir else None
+    downloader = ImageDownloader(output_dir=image_dir)
+    downloaded = downloader.download_all(products)
+    logger.info(f"[images+db] Downloaded {downloaded} images")
+
+    # Upload to Cloudflare and delete local files
+    if upload_cloudflare:
+        logger.info("[images+db] Uploading images to Cloudflare...")
+        try:
+            cf_uploader = CloudflareUploader()
+            cf_uploaded = cf_uploader.upload_all(products, delete_local=True)
+            logger.info(f"[images+db] Uploaded {cf_uploaded} images to Cloudflare, local files deleted")
+        except ValueError as e:
+            logger.error(f"[images+db] Cloudflare upload skipped: {e}")
+        except Exception as e:
+            logger.error(f"[images+db] Cloudflare upload failed: {e}")
+
+    # Store in MongoDB (after Cloudflare so it has the CDN URLs)
+    if store_db:
+        logger.info("[images+db] Storing products in MongoDB...")
+        try:
+            mongo = MongoDBStorage()
+            mongo.connect()
+            inserted = mongo.insert_products(products)
+            logger.info(f"[images+db] Inserted {inserted} products into MongoDB")
+            mongo.close()
+        except ValueError as e:
+            logger.error(f"[images+db] MongoDB storage skipped: {e}")
+        except Exception as e:
+            logger.error(f"[images+db] MongoDB storage failed: {e}")
+
+
+def _task_export(products, output_dir):
+    """Export scraped data to CSV and JSON."""
+    logger = logging.getLogger(__name__)
+    logger.info("[export] Exporting data to CSV and JSON...")
+    exporter = DataExporter(output_dir=output_dir)
+    csv_path, json_path = exporter.export_all(products)
+    logger.info(f"[export] CSV exported to: {csv_path}")
+    logger.info(f"[export] JSON exported to: {json_path}")
+
+
 def run_scraper(query, pages=1, output_dir=None, download_images=True,
                 upload_cloudflare=True, store_db=True):
     """Run the full scraping pipeline.
 
-    Pipeline:
-        1. Scrape AliExpress search results
-        2. Download product images locally
-        3. Upload images to Cloudflare Images
-        4. Delete local images after upload
-        5. Store product data in MongoDB (Clothing collection)
-        6. Export data to CSV and JSON
+    After scraping, post-processing tasks run in parallel:
+        Thread 1: Download images -> Cloudflare upload -> Delete local -> MongoDB insert
+        Thread 2: Export CSV + JSON
 
     Args:
         query: Search query string
@@ -95,7 +143,7 @@ def run_scraper(query, pages=1, output_dir=None, download_images=True,
     """
     logger = logging.getLogger(__name__)
 
-    # 1. Scrape products
+    # 1. Scrape products (must complete before anything else)
     logger.info(f"Starting scrape for: '{query}' ({pages} page(s))")
     scraper = AliExpressScraper()
     products = scraper.scrape(query, pages=pages)
@@ -104,48 +152,31 @@ def run_scraper(query, pages=1, output_dir=None, download_images=True,
         logger.warning("No products found. AliExpress may be blocking the request or the page structure changed.")
         return []
 
-    logger.info(f"Scraped {len(products)} products")
+    logger.info(f"Scraped {len(products)} products — launching parallel post-processing...")
 
-    # 2. Download images locally
-    if download_images:
-        logger.info("Downloading product images...")
-        image_dir = os.path.join(output_dir, "images") if output_dir else None
-        downloader = ImageDownloader(output_dir=image_dir)
-        downloaded = downloader.download_all(products)
-        logger.info(f"Downloaded {downloaded} images")
+    # 2. Run post-scrape tasks in parallel
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        futures = {}
 
-        # 3. Upload to Cloudflare Images and delete local files
-        if upload_cloudflare:
-            logger.info("Uploading images to Cloudflare...")
+        if download_images:
+            futures["images+db"] = executor.submit(
+                _task_images_and_db, products, output_dir, upload_cloudflare, store_db
+            )
+        elif store_db:
+            # No images, but still store in MongoDB
+            futures["db_only"] = executor.submit(
+                lambda: _task_images_and_db(products, output_dir, False, True)
+            )
+
+        futures["export"] = executor.submit(_task_export, products, output_dir)
+
+        # Wait for all tasks and log any errors
+        for name, future in futures.items():
             try:
-                cf_uploader = CloudflareUploader()
-                cf_uploaded = cf_uploader.upload_all(products, delete_local=True)
-                logger.info(f"Uploaded {cf_uploaded} images to Cloudflare, local files deleted")
-            except ValueError as e:
-                logger.error(f"Cloudflare upload skipped: {e}")
+                future.result()
+                logger.info(f"Task '{name}' completed successfully")
             except Exception as e:
-                logger.error(f"Cloudflare upload failed: {e}")
-
-    # 4. Store in MongoDB
-    if store_db:
-        logger.info("Storing products in MongoDB...")
-        try:
-            mongo = MongoDBStorage()
-            mongo.connect()
-            inserted = mongo.insert_products(products)
-            logger.info(f"Inserted {inserted} products into MongoDB")
-            mongo.close()
-        except ValueError as e:
-            logger.error(f"MongoDB storage skipped: {e}")
-        except Exception as e:
-            logger.error(f"MongoDB storage failed: {e}")
-
-    # 5. Export data to CSV and JSON
-    logger.info("Exporting data to CSV and JSON...")
-    exporter = DataExporter(output_dir=output_dir)
-    csv_path, json_path = exporter.export_all(products)
-    logger.info(f"CSV exported to: {csv_path}")
-    logger.info(f"JSON exported to: {json_path}")
+                logger.error(f"Task '{name}' failed: {e}")
 
     return products
 
