@@ -1,3 +1,5 @@
+"""Product image downloader."""
+
 import os
 import re
 import time
@@ -8,7 +10,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from config import DEFAULT_IMAGE_DIR, REQUEST_TIMEOUT
+from ..config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +19,7 @@ class ImageDownloader:
     """Download product images from URLs."""
 
     def __init__(self, output_dir=None):
-        self.output_dir = output_dir or DEFAULT_IMAGE_DIR
+        self.output_dir = output_dir or str(settings.default_image_dir)
         os.makedirs(self.output_dir, exist_ok=True)
         self.session = requests.Session()
         self.session.headers.update({
@@ -58,11 +60,6 @@ class ImageDownloader:
     def download_image(self, url, product_title="", index=0):
         """Download a single image.
 
-        Args:
-            url: Image URL
-            product_title: Product title for filename
-            index: Product index for unique naming
-
         Returns:
             Path to downloaded image, or empty string on failure
         """
@@ -71,7 +68,7 @@ class ImageDownloader:
             return ""
 
         try:
-            response = self.session.get(url, timeout=REQUEST_TIMEOUT, stream=True)
+            response = self.session.get(url, timeout=settings.request_timeout, stream=True)
             response.raise_for_status()
 
             content_type = response.headers.get("Content-Type", "")
@@ -103,10 +100,6 @@ class ImageDownloader:
 
     def download_all(self, products, delay=0.5):
         """Download images for all products.
-
-        Args:
-            products: List of product dicts (must have 'image_url' key)
-            delay: Delay between downloads in seconds
 
         Returns:
             Number of successfully downloaded images

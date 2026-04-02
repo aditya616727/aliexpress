@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ali-scraper"
+version = "1.0.0"
+description = "AliExpress product scraper with image pipeline and MongoDB storage"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["scraper", "aliexpress", "products", "mongodb", "cloudflare"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.3",
+    "lxml>=5.1.0",
+    "playwright>=1.40.0",
+    "pymongo[srv]>=4.9,<5.0",
+    "python-dotenv>=1.0.1",
+    "pyyaml>=6.0",
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2,<10",
+    "pytest-mock>=3.12.0",
+]
+
+[project.scripts]
+ali-scraper = "ali_scraper.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/your-org/ali-scraper"
+
+[tool.setuptools.packages.find]
+where = ["src"]

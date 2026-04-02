@@ -1,0 +1,15 @@
+categories:
+  - category_id: electronics
+    name: "Electronics & Gadgets"
+    query: "wireless earbuds"
+    pages: 2
+
+  - category_id: phone_accessories
+    name: "Phone Accessories"
+    query: "phone case"
+    pages: 1
+
+  - category_id: computer_peripherals
+    name: "Computer Peripherals"
+    query: "laptop stand"
+    pages: 1

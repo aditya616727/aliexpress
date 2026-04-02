@@ -5,7 +5,7 @@ import logging
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 
-from config import MONGODB_URI
+from ..config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -84,15 +84,7 @@ def _guess_clothing_attributes(title):
 
 
 def product_to_clothing_doc(product):
-    """Convert a scraped product dict to a MongoDB Clothing document.
-
-    Args:
-        product: Dict with keys like title, price, original_price, discount,
-                 image_url, product_url, images (cloudflare URLs), etc.
-
-    Returns:
-        Dict matching the ClothingSchema structure
-    """
+    """Convert a scraped product dict to a MongoDB Clothing document."""
     title = product.get("title", "")
     price = _parse_price(product.get("price", ""))
     original_price = _parse_price(product.get("original_price", ""))
@@ -140,7 +132,7 @@ class MongoDBStorage:
     """Store scraped products in MongoDB using the Clothing schema."""
 
     def __init__(self, uri=None, db_name=None):
-        self.uri = uri or MONGODB_URI
+        self.uri = uri or settings.mongodb_uri
         if not self.uri:
             raise ValueError(
                 "MongoDB URI is required. Set MONGODB_URI in .env"
@@ -176,9 +168,6 @@ class MongoDBStorage:
     def insert_products(self, products):
         """Convert and insert scraped products into the Clothing collection.
 
-        Args:
-            products: List of scraped product dicts
-
         Returns:
             Number of documents inserted
         """
@@ -203,3 +192,15 @@ class MongoDBStorage:
         except OperationFailure as e:
             logger.error(f"MongoDB insert failed: {e}")
             raise
+
+
+# Module-level singleton (like ad-extractor's mongo_client)
+mongo_storage = None
+
+
+def get_mongo_storage():
+    """Get or create the singleton MongoDBStorage instance."""
+    global mongo_storage
+    if mongo_storage is None:
+        mongo_storage = MongoDBStorage()
+    return mongo_storage

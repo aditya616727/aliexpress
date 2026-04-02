@@ -1,3 +1,5 @@
+"""AliExpress product scraper using Playwright."""
+
 import json
 import re
 import time
@@ -5,16 +7,10 @@ import random
 import logging
 from urllib.parse import quote_plus
 
-from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
-from config import (
-    ALIEXPRESS_SEARCH_URL,
-    REQUEST_DELAY_MIN,
-    REQUEST_DELAY_MAX,
-    HEADLESS,
-    CHROME_SANDBOX,
-)
+from .base import BaseScraper
+from ..config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -33,62 +29,19 @@ EMPTY_PRODUCT = {
 }
 
 
-class AliExpressScraper:
+class AliExpressScraper(BaseScraper):
     """Scrapes product listings from AliExpress search results using Playwright."""
-
-    def __init__(self):
-        self._pw = None
-        self._browser = None
 
     def _build_search_url(self, query, page=1):
         encoded_query = quote_plus(query)
-        url = ALIEXPRESS_SEARCH_URL.format(query=encoded_query)
+        url = settings.search_url.format(query=encoded_query)
         if page > 1:
             url += f"?page={page}&SearchText={encoded_query}"
         return url
 
-    def _launch_browser(self):
-        if self._browser is None:
-            self._pw = sync_playwright().start()
-            launch_args = [
-                    "--disable-blink-features=AutomationControlled",
-                    "--disable-dev-shm-usage",
-                ]
-            if not CHROME_SANDBOX:
-                launch_args.append("--no-sandbox")
-            self._browser = self._pw.chromium.launch(
-                headless=HEADLESS,
-                args=launch_args,
-            )
-        return self._browser
-
-    def _close_browser(self):
-        if self._browser:
-            self._browser.close()
-            self._browser = None
-        if self._pw:
-            self._pw.stop()
-            self._pw = None
-
     def _fetch_page(self, url):
         """Fetch a page using Playwright browser with stealth."""
-        browser = self._launch_browser()
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            viewport={"width": 1920, "height": 1080},
-            locale="en-US",
-            java_script_enabled=True,
-        )
-
-        # Stealth: hide automation markers from anti-bot detection
-        context.add_init_script("""
-            Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
-            delete navigator.__proto__.webdriver;
-            Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]});
-            Object.defineProperty(navigator, 'languages', {get: () => ['en-US', 'en']});
-            window.chrome = { runtime: {}, loadTimes: function(){}, csi: function(){} };
-        """)
-
+        context = self._create_context()
         page = context.new_page()
 
         try:
@@ -366,7 +319,7 @@ class AliExpressScraper:
         product = dict(EMPTY_PRODUCT)
         product["product_url"] = product_url
 
-        # Title — h3 is used in AliExpress search cards, fallback to h1/h2/title attr
+        # Title
         title_el = (
             card.find("h3")
             or card.find("h1")
@@ -386,12 +339,10 @@ class AliExpressScraper:
                     product["title"] = text
                     break
 
-        # Use concatenated text (no separator) so split-span prices stay intact
+        # Price
         all_text = card.get_text(strip=True)
-        # Match prices like Rs.3,049.37 or US $12.99 — limit decimal to 2 digits
         price_matches = re.findall(r'(?:Rs\.|US\s*\$|€|£|¥|₹)[\d,]+(?:\.\d{1,2})?', all_text)
 
-        # Price — first currency match is the sale price
         if price_matches:
             product["price"] = price_matches[0].strip()
         if not product["price"]:
@@ -401,19 +352,19 @@ class AliExpressScraper:
                 m = re.match(r'((?:Rs\.|US\s*\$|€|£|¥|₹)\s*[\d,]+\.?\d*)', raw)
                 product["price"] = m.group(1) if m else raw
 
-        # Original price — second currency match if different from sale price
+        # Original price
         if len(price_matches) >= 2:
             for pm in price_matches[1:]:
                 if pm.strip() != product["price"].strip():
                     product["original_price"] = pm.strip()
                     break
 
-        # Discount — look for percentage like -20% or 47% off
+        # Discount
         discount_match = re.search(r'-?\d+%', all_text)
         if discount_match:
             product["discount"] = discount_match.group(0)
 
-        # Image — prefer product images from alicdn/aliexpress-media
+        # Image
         for img_el in card.find_all("img"):
             img_src = (
                 img_el.get("src")
@@ -428,7 +379,6 @@ class AliExpressScraper:
             if img_src and ("alicdn" in img_src or "aliexpress-media" in img_src):
                 if not img_src.startswith("http"):
                     img_src = "https:" + img_src if img_src.startswith("//") else "https:" + img_src
-                # Strip _.avif suffix to get actual JPEG/PNG from AliExpress CDN
                 img_src = re.sub(r'_\.avif$', '', img_src)
                 product["image_url"] = img_src
                 break
@@ -452,7 +402,7 @@ class AliExpressScraper:
         if rating_el:
             product["rating"] = rating_el.get_text(strip=True)
 
-        # Orders / sold count — use spaced text for readability
+        # Orders / sold count
         spaced_text = card.get_text(" ", strip=True)
         sold_match = re.search(r'(\d[\d,]*\+?\s*sold)', spaced_text, re.I)
         if sold_match:
@@ -491,7 +441,7 @@ class AliExpressScraper:
                 all_products.extend(products)
 
                 if page < pages:
-                    delay = random.uniform(REQUEST_DELAY_MIN, REQUEST_DELAY_MAX)
+                    delay = random.uniform(settings.delay_min, settings.delay_max)
                     logger.info(f"Waiting {delay:.1f}s before next page...")
                     time.sleep(delay)
         finally:

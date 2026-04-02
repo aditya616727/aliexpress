@@ -5,10 +5,12 @@ import tempfile
 import pytest
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from exporter import DataExporter
-from config import PRODUCT_FIELDS
+from ali_scraper.export.data import DataExporter
+from ali_scraper.config.settings import settings
+
+PRODUCT_FIELDS = settings.product_fields
 
 
 SAMPLE_PRODUCTS = [

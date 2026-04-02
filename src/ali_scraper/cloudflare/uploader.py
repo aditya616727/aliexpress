@@ -5,7 +5,7 @@ import logging
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from config import CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, MAX_CONCURRENT_UPLOADS
+from ..config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +18,8 @@ class CloudflareUploader:
     """Upload images to Cloudflare Images API."""
 
     def __init__(self, account_id=None, api_token=None):
-        self.account_id = account_id or CLOUDFLARE_ACCOUNT_ID
-        self.api_token = api_token or CLOUDFLARE_API_TOKEN
+        self.account_id = account_id or settings.cloudflare_account_id
+        self.api_token = api_token or settings.cloudflare_api_token
         self.upload_url = CLOUDFLARE_UPLOAD_URL.format(account_id=self.account_id)
         self.headers = {
             "Authorization": f"Bearer {self.api_token}",
@@ -33,10 +33,6 @@ class CloudflareUploader:
 
     def upload_image(self, image_path, product_title=""):
         """Upload a single image to Cloudflare Images.
-
-        Args:
-            image_path: Local path to the image file
-            product_title: Optional title for metadata
 
         Returns:
             Cloudflare image URL string, or empty string on failure
@@ -89,17 +85,13 @@ class CloudflareUploader:
     def upload_all(self, products, delete_local=True):
         """Upload all product images to Cloudflare and update product dicts.
 
-        Args:
-            products: List of product dicts with 'image_path' keys
-            delete_local: Whether to delete local image files after upload
-
         Returns:
             Number of successfully uploaded images
         """
         uploaded = 0
         tasks = []
 
-        with ThreadPoolExecutor(max_workers=MAX_CONCURRENT_UPLOADS) as executor:
+        with ThreadPoolExecutor(max_workers=settings.max_concurrent_uploads) as executor:
             for i, product in enumerate(products):
                 image_path = product.get("image_path", "")
                 if not image_path or not os.path.exists(image_path):

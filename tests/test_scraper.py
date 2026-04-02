@@ -3,9 +3,9 @@ import pytest
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from scraper import AliExpressScraper
+from ali_scraper.scrapers.aliexpress import AliExpressScraper
 
 
 # --- Sample HTML and data fixtures ---

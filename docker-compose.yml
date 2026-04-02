@@ -1,0 +1,24 @@
+services:
+  scraper:
+    build: .
+    image: ali-scraper:latest
+    env_file: .env
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - HEADLESS=true
+      - PROXY_SERVER=${PROXY_SERVER}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - MAX_PAGES=${MAX_PAGES:-5}
+      - DELAY_MIN=${DELAY_MIN:-2}
+      - DELAY_MAX=${DELAY_MAX:-5}
+      - MAX_CONCURRENT_UPLOADS=${MAX_CONCURRENT_UPLOADS:-5}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - ./data:/app/data
+    shm_size: "2gb"
+    restart: "no"

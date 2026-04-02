@@ -1,8 +1,9 @@
-.env
 __pycache__/
 *.pyc
+.env
 output/
 data/
+logs/
 debug_page.html
 scraper_debug.html
 *.egg-info/

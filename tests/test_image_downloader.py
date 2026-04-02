@@ -3,9 +3,9 @@ import tempfile
 import pytest
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from image_downloader import ImageDownloader
+from ali_scraper.export.images import ImageDownloader
 
 
 # Fake response for mocking requests

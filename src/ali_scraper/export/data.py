@@ -1,9 +1,11 @@
+"""CSV and JSON data exporter."""
+
 import csv
 import json
 import os
 import logging
 
-from config import PRODUCT_FIELDS, CSV_FILENAME, JSON_FILENAME, DEFAULT_OUTPUT_DIR
+from ..config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -12,24 +14,22 @@ class DataExporter:
     """Export scraped product data to CSV and JSON formats."""
 
     def __init__(self, output_dir=None):
-        self.output_dir = output_dir or DEFAULT_OUTPUT_DIR
+        self.output_dir = output_dir or str(settings.default_output_dir)
         os.makedirs(self.output_dir, exist_ok=True)
 
     def export_to_csv(self, products, filename=None):
         """Export products to a CSV file.
 
-        Args:
-            products: List of product dicts
-            filename: Optional custom filename
-
         Returns:
             Path to the created CSV file
         """
-        filepath = os.path.join(self.output_dir, filename or CSV_FILENAME)
+        filepath = os.path.join(self.output_dir, filename or settings.csv_filename)
 
         try:
             with open(filepath, "w", newline="", encoding="utf-8") as f:
-                writer = csv.DictWriter(f, fieldnames=PRODUCT_FIELDS, extrasaction="ignore")
+                writer = csv.DictWriter(
+                    f, fieldnames=settings.product_fields, extrasaction="ignore"
+                )
                 writer.writeheader()
                 for product in products:
                     writer.writerow(product)
@@ -43,14 +43,10 @@ class DataExporter:
     def export_to_json(self, products, filename=None):
         """Export products to a JSON file.
 
-        Args:
-            products: List of product dicts
-            filename: Optional custom filename
-
         Returns:
             Path to the created JSON file
         """
-        filepath = os.path.join(self.output_dir, filename or JSON_FILENAME)
+        filepath = os.path.join(self.output_dir, filename or settings.json_filename)
 
         try:
             with open(filepath, "w", encoding="utf-8") as f:
