@@ -2,7 +2,7 @@
 """Scrape Bytbil showroom dealer details and save to CSV or MongoDB.
 
 This script scrapes dealer detail pages from https://www.bytbil.com/handlare
-and extracts company name, email, phone, website, and address.
+and extracts company name, email, phone, and address.
 
 By default it writes results to a CSV file in the repository root.
 Use --mongo to also upsert results into the existing MongoDB broker collection.
@@ -59,7 +59,6 @@ CSV_FIELDS = [
     "dealer_name",
     "email",
     "phone",
-    "website",
     "address",
     "scraped_at",
 ]
@@ -151,7 +150,6 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
 
     phone = None
     email = None
-    website = None
     address = None
 
     for a in soup.find_all("a", href=True):
@@ -160,12 +158,7 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
             phone = href.replace("tel:", "").strip()
         elif href.startswith("mailto:") and not email:
             email = href.replace("mailto:", "").strip()
-        elif href.startswith("http"):
-            cleaned = href.strip()
-            if "bytbil.com" not in cleaned and "hitta.se" not in cleaned and "facebook.com" not in cleaned and "vend.com" not in cleaned:
-                if not website:
-                    website = cleaned
-        if phone and email and website:
+        if phone and email:
             break
 
     if jsonld:
@@ -173,8 +166,6 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
             email = jsonld.get("email")
         if not phone:
             phone = jsonld.get("telephone")
-        if not website:
-            website = jsonld.get("url")
         address_data = jsonld.get("address")
         if address_data and isinstance(address_data, dict) and not address:
             parts = []
@@ -198,7 +189,6 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
         "dealer_name": name or "",
         "email": email or "",
         "phone": phone or "",
-        "website": website or "",
         "address": address or "",
         "source_site": "bytbil",
         "source_url": source_url,
@@ -236,7 +226,6 @@ def upsert_to_mongo(rows: List[Dict[str, Optional[str]]]) -> int:
             "name": row["dealer_name"],
             "email": row["email"],
             "phone": row["phone"],
-            "website": row["website"],
             "address": row["address"],
         }
         result = collection.update_one(
