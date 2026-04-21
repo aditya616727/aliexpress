@@ -303,7 +303,7 @@ def parse_args() -> ArgumentParser:
     parser.add_argument("--max-pages", type=int, default=10, help="Maximum listing pages to crawl")
     parser.add_argument("--delay", type=float, default=1.0, help="Delay between requests in seconds")
     parser.add_argument("--output-file", type=str, default="bytbil_dealers.csv", help="CSV file to write")
-    parser.add_argument("--mongo", action="store_true", help="Upsert results into MongoDB brokers collection")
+    parser.add_argument("--no-mongo", action="store_true", help="Skip upserting results into MongoDB")
     return parser
 
 
@@ -324,9 +324,11 @@ def main() -> None:
 
     save_csv(rows, Path(args.output_file))
 
-    if args.mongo:
+    if not args.no_mongo:
         count = upsert_to_mongo(rows)
-        print(f"MongoDB upsert completed: {count} documents upserted.")
+        print(f"MongoDB upsert completed: {count} documents upserted into bytbil_dealers collection.")
+    else:
+        print("Skipping MongoDB upsert (--no-mongo flag set).")
 
 
 if __name__ == "__main__":
