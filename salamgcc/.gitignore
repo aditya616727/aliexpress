@@ -1,0 +1,61 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+Venv/
+ENV/
+env/
+*.egg-info/
+dist/
+build/
+PROXY_SETUP.md
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+scripts/config/broker_images
+# Logs
+*.log
+logs/
+scraper*.log
+test_*.log
+
+# Data files
+data/exports/*.json
+data/images/
+*.csv
+*.xlsx
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+.dockerignore

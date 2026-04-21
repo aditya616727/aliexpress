@@ -1,0 +1,752 @@
+# Dealer configuration for ad-extractor
+# Add or modify dealers here - the scraper will use this list
+
+dealers:
+  # - business_id: HEDIN_AUTOMOTIVE_VSTRA_FROULUND
+  #   name: Hedin Automotive Mercedes- Benz Sisjön
+  #   location: Västra Frölund
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8948843
+  #   email: info.sisjon@hedinautomotive.se
+  #   phone: "031-790 09 00"
+
+  # - business_id: HEDIN_JAGERSRO_MALMO
+  #   name: Hedin Automotive Jägersro
+  #   location: Malmö
+  #   url: https://www.blocket.se/mobility/search/car?orgId=487930
+  #   email: salj.jagersro@hedinautomotive.se
+  #   phone: "040-671 11 00"
+
+  # - business_id: HEDIN_AKALLA_KISTA
+  #   name: Hedin Automotive Akalla
+  #   location: Kista
+  #   url: https://www.blocket.se/mobility/search/car?orgId=9067169
+  #   email: info.sthlm@hedinautomotive.se
+  #   phone: "08-505 692 00"
+
+  # - business_id: HEDIN_MOLNDAL
+  #   name: Hedin Automotive Mölndal
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5953248
+  #   email: info.bilvaruhuset@hedinautomotive.se
+  #   phone: "031-790 04 00"
+
+  # - business_id: HEDIN_JONKOPING
+  #   name: Hedin Automotive Jönköping
+  #   location: Jönköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5190266
+  #   email: info.jonkoping@hedinautomotive.se
+  #   phone: "036-34 53 00"
+
+  - business_id: HEDIN_HELSINGBORG
+    name: Hedin Automotive Helsingborg
+    location: Helsingborg
+    url: https://www.blocket.se/mobility/search/car?orgId=7641434
+    email: info.helsingborg@hedinautomotive.se
+    phone: "042-16 63 00"
+
+  # - business_id: HEDIN_FORD_EKLANDA_MOLNDAL
+  #   name: Hedin Automotive Ford Eklanda
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2461325
+  #   email: info.fordeklanda@hedinautomotive.se
+  #   phone: "031-751 75 00"
+
+  # - business_id: HEDIN_UPPSALA
+  #   name: Hedin Automotive Uppsala
+  #   location: Uppsala
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3605585
+  #   email: info.uppsala@hedinautomotive.se
+  #   phone: "018-418 06 00"
+
+  # - business_id: HEDIN_BAVARIA_SKELLEFTEA
+  #   name: Hedin Automotive Bavaria Skellefteå
+  #   location: Skellefteå
+  #   url: https://www.blocket.se/mobility/search/car?orgId=9584167
+  #   email: skelleftea@hedinautomotive.se
+  #   phone: "0910-76 33 00"
+
+  # - business_id: HEDIN_BAVARIA_ORNSKOLDSVIK
+  #   name: Hedin Automotive Bavaria Örnsköldsvik
+  #   location: Örnsköldsvik
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7895337
+  #   email: ornskoldsvik@hedinautomotive.se
+  #   phone: "0660-24 73 00"
+
+  # - business_id: HEDIN_MINI_DANDERYD
+  #   name: Hedin Automotive MINI Danderyd Begagnade
+  #   location: Danderyd
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6695149
+  #   email: mini.danderyd@hedinautomotive.se
+  #   phone: "08-505 699 00"
+
+  # - business_id: HEDIN_BAVARIA_UPPSALA
+  #   name: Hedin Automotive Bavaria Uppsala
+  #   location: Uppsala
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5746403
+  #   email: bmw.uppsala@hedinautomotive.se
+  #   phone: "018-418 45 00"
+
+  # - business_id: HEDIN_JLR_GOTEBORG
+  #   name: Hedin Automotive JLR Göteborg
+  #   location: Göteborg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=460038
+  #   email: info.jaguarlandrover.goteborg@hedinautomotive.se
+  #   phone: "031-718 15 00"
+
+  # - business_id: HEDIN_JLR_HALMSTAD
+  #   name: Hedin Automotive JLR Halmstad
+  #   location: Halmstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6764234
+  #   email: info.hedinbc.halmstad@hedinautomotive.se
+  #   phone: "035-240 04 00"
+
+  # - business_id: HEDIN_BAVARIA_LULEA
+  #   name: Hedin Automotive Bavaria Luleå
+  #   location: Luleå
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4293440
+  #   email: lulea@hedinautomotive.se
+  #   phone: "0920-43 26 00"
+
+  # - business_id: HEDIN_BMW_KISTA
+  #   name: Hedin Automotive BMW Kista
+  #   location: Kista
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1549074
+  #   email: bmw.kista@hedinautomotive.se
+  #   phone: "08-735 39 00"
+
+  # - business_id: HEDIN_BMW_GAVLE
+  #   name: Hedin Automotive BMW Gävle
+  #   location: Gävle
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2722827
+  #   email: gavle@hedinautomotive.se
+  #   phone: "026-421 31 00"
+
+  # - business_id: HEDIN_BMW_SUNDSVALL
+  #   name: Hedin Automotive BMW Sundsvall
+  #   location: Sundsvall
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8538008
+  #   email: sundsvall@hedinautomotive.se
+  #   phone: "060-744 51 00"
+
+  # - business_id: HEDIN_BAVARIA_UMEA
+  #   name: Hedin Automotive Bavaria Umeå
+  #   location: Umeå
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4247465
+  #   email: umea@hedinautomotive.se
+  #   phone: "090-999 61 00"
+
+  # - business_id: HEDIN_BMW_DANDERYD
+  #   name: Hedin Automotive BMW Danderyd
+  #   location: Danderyd
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7492040
+  #   email: bmw.danderyd@hedinautomotive.se
+  #   phone: "08-446 58 50"
+
+  # - business_id: HEDIN_BMW_BROMMA
+  #   name: Hedin Automotive BMW Bromma
+  #   location: Bromma
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4305548
+  #   email: bmw.bromma@hedinautomotive.se
+  #   phone: "08-588 936 40"
+
+  # - business_id: HEDIN_JLR_MALMO
+  #   name: Hedin Automotive JLR Malmö
+  #   location: Malmö
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1390432
+  #   email: info.malmojlr@hedinautomotive.se
+  #   phone: "040-655 93 00"
+
+  # - business_id: HEDIN_JLR_LINKOPING
+  #   name: Hedin Automotive JLR Linköping
+  #   location: Linköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=520746
+  #   email: info.linkopingjlr@hedinautomotive.se
+  #   phone: "013-190 16 00"
+
+  # - business_id: HEDIN_BMW_SOLNA
+  #   name: Hedin Automotive BMW Solna
+  #   location: Solna
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8017645
+  #   email: ""
+  #   phone: "08-570 461 00"
+
+  # - business_id: HEDIN_BMW_OSTERSUND
+  #   name: Hedin Automotive BMW Östersund
+  #   location: Östersund
+  #   url: https://www.blocket.se/mobility/search/car?orgId=9507793
+  #   email: ostersund@hedinautomotive.se
+  #   phone: "063-660 56 00"
+
+  # - business_id: HEDIN_VARBERG_HOLMAGARDE
+  #   name: Hedin Automotive Varberg Holmagärde
+  #   location: Varberg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4884751
+  #   email: forsaljning.holmagarde@hedinautomotive.se
+  #   phone: "0340-59 34 00"
+
+  # - business_id: HEDIN_TROLLHATTAN
+  #   name: Hedin Automotive Trollhättan
+  #   location: Trollhättan
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2484200
+  #   email: info.bilvaruhuset.trollhattan@hedinautomotive.se
+  #   phone: "0520-52 64 00"
+
+  # - business_id: HEDIN_EKLANDA_MOLNDAL
+  #   name: Hedin Automotive Eklanda
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3475502
+  #   email: info.adventurecar@hedinautomotive.se
+  #   phone: "031-351 56 00"
+
+  # - business_id: HEDIN_MERCEDES_MOLNDAL
+  #   name: Hedin Automotive Mercedes-Benz Mölndal
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3839344
+  #   email: mb.molndal.sales@hedinautomotive.se
+  #   phone: "031-790 00 00"
+
+  # - business_id: HEDIN_NISSAN_MOLNDAL
+  #   name: Hedin Automotive Nissan Mölndal
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4411774
+  #   email: info.nissan@hedinautomotive.se
+  #   phone: "031-790 00 00"
+
+  # - business_id: HEDIN_KUNGSBACKA
+  #   name: Hedin Automotive Kungsbacka
+  #   location: Kungsbacka
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3238574
+  #   email: info.kungsbacka@hedinautomotive.se
+  #   phone: "0300-32 02 00"
+
+  # - business_id: HEDIN_KIA_TAGENE
+  #   name: Hedin Automotive Kia Tagene
+  #   location: Hisings Kärra
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3837973
+  #   email: forsaljning.kiatagene@hedinautomotive.se
+  #   phone: "031-718 12 20"
+
+  # - business_id: HEDIN_BMW_USED_SOLNA
+  #   name: Hedin Automotive BMW Solna
+  #   location: Solna
+  #   url: https://www.blocket.se/mobility/search/car?orgId=828614
+  #   email: bmw.solna@hedinautomotive.se
+  #   phone: "08-408 326 34"
+
+  # - business_id: HEDIN_TRANSPORTBILSCENTER_GRIMBODALEN
+  #   name: Hedin Automotive Transportbilscenter Grimbodalen
+  #   location: Göteborg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=244657
+  #   email: info.grimbodalen@hedinautomotive.se
+  #   phone: "031-799 81 30"
+
+  # - business_id: HEDIN_BORAS
+  #   name: Hedin Automotive Borås
+  #   location: Borås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3515420
+  #   email: info.boras@hedinautomotive.se
+  #   phone: "033-44 75 00"
+
+  # - business_id: HEDIN_ALINGSAS
+  #   name: Hedin Automotive Alingsås
+  #   location: Alingsås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5460728
+  #   email: info.alingsas@hedinautomotive.se
+  #   phone: "0322-67 09 00"
+
+  # - business_id: HEDIN_MERCEDES_TROLLHATTAN
+  #   name: Hedin Automotive Mercedes-Benz Trollhättan
+  #   location: Trollhättan
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5801758
+  #   email: info.trollhattan@hedinautomotive.se
+  #   phone: "0431-41 60 70"
+
+  # - business_id: HEDIN_MERCEDES_LINKOPING
+  #   name: Hedin Automotive Mercedes-Benz Linköping
+  #   location: Linköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=177056
+  #   email: info.linkoping@hedinautomotive.se
+  #   phone: "013-470 33 00"
+
+  # - business_id: HEDIN_MERCEDES_KRISTIANSTAD
+  #   name: Hedin Automotive Mercedes-Benz Kristianstad
+  #   location: Kristianstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4459649
+  #   email: info.kristianstad@hedinautomotive.se
+  #   phone: "044-24 66 00"
+
+  # - business_id: HEDIN_TRUCK_CENTER_JONKOPING
+  #   name: Hedin Automotive Truck Center Jönköping
+  #   location: Jönköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2758750
+  #   email: info.jonkopingtrp@hedinautomotive.se
+  #   phone: "036-34 53 00"
+
+  # - business_id: HEDIN_KIA_HELSINGBORG
+  #   name: Hedin Automotive Kia Helsingborg
+  #   location: Helsingborg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=229570
+  #   email: info.kia.helsingborg@hedinautomotive.se
+  #   phone: "042-16 63 00"
+
+  # - business_id: HEDIN_KIA_BYD_HALMSTAD
+  #   name: Hedin Automotive Kia/BYD Halmstad
+  #   location: Halmstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1188683
+  #   email: info.kia.byd.halmstad@hedinautomotive.se
+  #   phone: "035-14 42 00"
+
+  # - business_id: HEDIN_FORD_MALMO
+  #   name: Hedin Automotive Ford Malmö
+  #   location: Malmö
+  #   url: https://www.blocket.se/mobility/search/car?orgId=9109363
+  #   email: info.fordmalmo@hedinautomotive.se
+  #   phone: "040-660 14 00"
+
+  # - business_id: HEDIN_FORD_KRISTIANSTAD
+  #   name: Hedin Automotive Ford Kristianstad
+  #   location: Kristianstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=37464
+  #   email: salj.fordkristianstad@hedinautomotive.se
+  #   phone: "044-300 02 00"
+
+  # - business_id: HEDIN_FORD_HALMSTAD
+  #   name: Hedin Automotive Ford Halmstad
+  #   location: Halmstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8436766
+  #   email: info.fordhalmstad@hedinautomotive.se
+  #   phone: "035-240 03 00"
+
+  # - business_id: HEDIN_VARNAMO_NORRA
+  #   name: Hedin Automotive Värnamo Norra
+  #   location: Värnamo
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7536163
+  #   email: info.varnamo@hedinautomotive.se
+  #   phone: "0370-20 80 00"
+
+  # - business_id: HEDIN_FORD_HANINGE
+  #   name: Hedin Automotive Ford Haninge
+  #   location: Österhanninge
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3256529
+  #   email: info.fordhaninge@hedinautomotive.se
+  #   phone: "08-128 661 00"
+
+  # - business_id: HEDIN_FORD_VASTERAS
+  #   name: Hedin Automotive Ford Västerås
+  #   location: Västerås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1015597
+  #   email: info.fordvasteras@hedinautomotive.se
+  #   phone: "021-480 47 00"
+
+  # - business_id: HEDIN_SEGELTORP
+  #   name: Hedin Automotive Segeltorp
+  #   location: Segeltorp
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5485616
+  #   email: info.segeltorp@hedinautomotive.se
+  #   phone: "08-505 691 00"
+
+  # - business_id: HEDIN_LUND
+  #   name: Hedin Automotive Lund
+  #   location: Lund
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8362009
+  #   email: info.lund@hedinautomotive.se
+  #   phone: "046-23 51 00"
+
+  # - business_id: HEDIN_KRISTIANSTAD
+  #   name: Hedin Automotive Kristianstad
+  #   location: Kristianstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=770092
+  #   email: info.bilvaruhuset.kristianstad@hedinautomotive.se
+  #   phone: "0431-41 60 70"
+
+  # - business_id: HEDIN_DANDERYD
+  #   name: Hedin Automotive Danderyd
+  #   location: Danderyd
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3301508
+  #   email: info.hedinbildanderyd@hedinautomotive.se
+  #   phone: "08-522 704 00"
+
+  # - business_id: HEDIN_RENAULT_ABRO
+  #   name: Hedin Automotive Renault Åbro
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5818705
+  #   email: info.abro@hedinautomotive.se
+  #   phone: "031-790 06 00"
+
+  # - business_id: HEDIN_TRANSPORTBILSCENTER_MOLNDAL
+  #   name: Hedin Automotive Transportbilscenter Mölndal
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6345820
+  #   email: info.molndaltrp@hedinautomotive.se
+  #   phone: "031-790 00 00"
+
+  # - business_id: HEDIN_BYD_EKLANDA
+  #   name: Hedin Automotive BYD Eklanda
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7505236
+  #   email: info.bydeklanda@hedinautomotive.se
+  #   phone: "0431-41 60 70"
+
+  # - business_id: HEDIN_TAGENE
+  #   name: Hedin Automotive Tagene
+  #   location: Hisings Kärra
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5446199
+  #   email: info.tagene@hedinautomotive.se
+  #   phone: "031-790 08 00"
+
+  # - business_id: HEDIN_VARA
+  #   name: Hedin Automotive Vara
+  #   location: Vara
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2012305
+  #   email: info.vara@hedinautomotive.se
+  #   phone: "0431-41 60 70"
+
+  # - business_id: HEDIN_FORD_KARLSHAMN
+  #   name: Hedin Automotive Ford Karlshamn
+  #   location: Karlshamn
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5485231
+  #   email: info.fordkarlshamn@hedinautomotive.se
+  #   phone: "0454-20 01 00"
+
+  # - business_id: HEDIN_FORD_HELSINGBORG
+  #   name: Hedin Automotive Ford Helsingborg
+  #   location: Helsingborg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8469059
+  #   email: info.fordhelsingborg@hedinautomotive.se
+  #   phone: "042-600 26 00"
+
+  # - business_id: HEDIN_FORD_ESKILSTUNA
+  #   name: Hedin Automotive Ford Eskilstuna
+  #   location: Eskilstuna
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6815008
+  #   email: info.fordeskilstuna@hedinautomotive.se
+  #   phone: "016-16 60 60"
+
+  # - business_id: HEDIN_FORD_BORAS
+  #   name: Hedin Automotive Ford Borås
+  #   location: Borås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1265178
+  #   email: info.fordboras@hedinautomotive.se
+  #   phone: "033-400 14 00"
+
+  # - business_id: HEDIN_FORD_ANGELHOLM
+  #   name: Hedin Automotive Ford Ängelholm
+  #   location: Ängelholm
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4741910
+  #   email: info.fordangelholm@hedinautomotive.se
+  #   phone: "0431-60 05 00"
+
+  # - business_id: HEDIN_FORD_ALINGSAS
+  #   name: Hedin Automotive Ford Alingsås
+  #   location: Alingsås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1203973
+  #   email: info.fordalingsas@hedinautomotive.se
+  #   phone: "0322-64 79 00"
+
+  # - business_id: HEDIN_FORD_UPPSALA
+  #   name: Hedin Automotive Ford Uppsala
+  #   location: Uppsala
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8586102
+  #   email: bilforsaljning.forduppsala@hedinautomotive.se
+  #   phone: "018-18 23 00"
+
+  # - business_id: HEDIN_FORD_SODERTALJE
+  #   name: Hedin Automotive Ford Södertälje
+  #   location: Södertälje
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5676642
+  #   email: info.fordsodertalje@hedinautomotive.se
+  #   phone: "08-550 205 00"
+
+  # - business_id: HEDIN_FORD_SEGELTORP
+  #   name: Hedin Automotive Ford Segeltorp
+  #   location: Segeltorp
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6419331
+  #   email: info.fordsegeltorp@hedinautomotive.se
+  #   phone: "08-735 05 00"
+
+  # - business_id: HEDIN_FORD_VARNAMO
+  #   name: Hedin Automotive Ford Värnamo
+  #   location: Värnamo
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4807801
+  #   email: info.fordvarnamo@hedinautomotive.se
+  #   phone: "0370-60 01 00"
+
+  - business_id: HEDIN_HELSINGBORG_OSTRA
+    name: Hedin Automotive Helsingborg Östra
+    location: Helsingborg
+    url: https://www.blocket.se/mobility/search/car?orgId=5568547
+    email: info.helsingborg@hedinautomotive.se
+    phone: "042-16 63 10"
+
+  # - business_id: HEDIN_HALMSTAD
+  #   name: Hedin Automotive Halmstad
+  #   location: Halmstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7725013
+  #   email: info.bilvaruhuset.halmstad@hedinautomotive.se
+  #   phone: "035-260 94 00"
+
+  # - business_id: HEDIN_ANGELHOLM
+  #   name: Hedin Automotive Ängelholm
+  #   location: Ängelholm
+  #   url: https://www.blocket.se/mobility/search/car?orgId=9247890
+  #   email: info.angelholm@hedinautomotive.se
+  #   phone: "0431-41 60 70"
+
+  # - business_id: HEDIN_ANDERSTORP
+  #   name: Hedin Automotive Anderstorp
+  #   location: Anderstorp
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3806442
+  #   email: info.anderstorp@hedinautomotive.se
+  #   phone: "0431-41 60 70"
+
+  # - business_id: HEDIN_TRUCK_CENTER_MARKARYD
+  #   name: Hedin Automotive Truck Center Markaryd
+  #   location: Markaryd
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8701710
+  #   email: info.markaryd@hedinautomotive.se
+  #   phone: "0433-51 24 00"
+
+  # - business_id: HEDIN_MERCEDES_MALMO
+  #   name: Hedin Automotive Mercedes-Benz Malmö
+  #   location: Malmö
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6299784
+  #   email: info.mercedesmalmo@hedinautomotive.se
+  #   phone: "040-671 70 00"
+
+  # - business_id: HEDIN_MERCEDES_LJUNGBY
+  #   name: Hedin Automotive Mercedes-Benz Ljungby
+  #   location: Ljungby
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4365797
+  #   email: info.ljungby@hedinautomotive.se
+  #   phone: "0372-28 12 82"
+
+  # - business_id: HEDIN_MG_SEGELTORP
+  #   name: Hedin Automotive MG Segeltorp
+  #   location: Segeltorp
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3971425
+  #   email: info.smista@hedinautomotive.se
+  #   phone: "08-505 698 00"
+
+  # - business_id: HEDIN_KIA_NORRTALJE
+  #   name: Hedin Automotive Kia Norrtälje
+  #   location: Norrtälje
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5277198
+  #   email: forsaljning.norrtalje.kia@hedinautomotive.se
+  #   phone: "0176-79 77 00"
+
+  # - business_id: HEDIN_ESKILSTUNA
+  #   name: Hedin Automotive Eskilstuna
+  #   location: Eskilstuna
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7128074
+  #   email: info.bilvaruhuset.eskilstuna@hedinautomotive.se
+  #   phone: "016-550 96 00"
+
+  # - business_id: HEDIN_KIA_DANDERYD
+  #   name: Hedin Automotive Kia Danderyd
+  #   location: Danderyd
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4512797
+  #   email: forsaljning.danderyd.kia@hedinautomotive.se
+  #   phone: "08-409 311 00"
+
+  # - business_id: HEDIN_LYSEKIL
+  #   name: Hedin Automotive Lysekil
+  #   location: Lysekil
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7523735
+  #   email: info.lysekil@hedinautomotive.se
+  #   phone: "0523-46 04 00"
+
+  # - business_id: HEDIN_OUTLET_ORREKULLA
+  #   name: Hedin Automotive Outlet Orrekulla
+  #   location: Hisings Kärra
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7975712
+  #   email: info.orrekullaoutlet@hedinautomotive.se
+  #   phone: "031-790 05 60"
+
+  # - business_id: HEDIN_MERCEDES_HISINGS_KARRA
+  #   name: Hedin Automotive Mercedes-Benz Hisings Kärra
+  #   location: Hisings Kärra
+  #   url: https://www.blocket.se/mobility/search/car?orgId=225155
+  #   email: info.orrekulla@hedinautomotive.se
+  #   phone: "031-790 05 00"
+
+  # - business_id: HEDIN_MG_ALINGSAS
+  #   name: Hedin Automotive MG Alingsås
+  #   location: Alingsås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=67896
+  #   email: info.mg-alingsas@hedinautomotive.se
+  #   phone: "0322-300 100"
+
+  # - business_id: HEDIN_UDDEVALLA
+  #   name: Hedin Automotive Uddevalla
+  #   location: Uddevalla
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2895482
+  #   email: info.bilvaruhuset.uddevalla@hedinautomotive.se
+  #   phone: "0522-58 28 00"
+
+  # - business_id: HEDIN_KIA_TROLLHATTAN
+  #   name: Hedin Automotive Kia Trollhättan
+  #   location: Trollhättan
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7643796
+  #   email: kia.trollhattan@hedinautomotive.se
+  #   phone: "0520-526 400"
+
+  # - business_id: HEDIN_MERCEDES_UDDEVALLA
+  #   name: Hedin Automotive Mercedes-Benz Uddevalla
+  #   location: Uddevalla
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1787868
+  #   email: info.uddevalla@hedinautomotive.se
+  #   phone: "0522-67 07 00"
+
+  # - business_id: HEDIN_FORD_LUND
+  #   name: Hedin Automotive Ford Lund
+  #   location: Lund
+  #   url: https://www.blocket.se/mobility/search/car?orgId=9019675
+  #   email: info.fordlund@hedinautomotive.se
+  #   phone: "046-288 20 00"
+
+  # - business_id: HEDIN_FORD_KUNGSBACKA
+  #   name: Hedin Automotive Ford Kungsbacka
+  #   location: Kungsbacka
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5660642
+  #   email: info.fordkungsbacka@hedinautomotive.se
+  #   phone: "0300-32 02 00"
+
+  # - business_id: HEDIN_FORD_AKALLA
+  #   name: Hedin Automotive Ford Akalla
+  #   location: Kista
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6709711
+  #   email: info.fordakalla@hedinautomotive.se
+  #   phone: "08-505 693 00"
+
+  # - business_id: HEDIN_FORD_TAGENE
+  #   name: Hedin Automotive Ford Tagene
+  #   location: Hisings Kärra
+  #   url: https://www.blocket.se/mobility/search/car?orgId=1533067
+  #   email: info.fordtagene@hedinautomotive.se
+  #   phone: "031-751 75 10"
+
+  # - business_id: HEDIN_FORD_ENKOPING
+  #   name: Hedin Automotive Ford Enköping
+  #   location: Enköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8066274
+  #   email: bilforsaljning.fordenkoping@hedinautomotive.se
+  #   phone: "0171-10 00 50"
+
+  # - business_id: HEDIN_FORD_BROMMA
+  #   name: Hedin Automotive Ford Bromma
+  #   location: Bromma
+  #   url: https://www.blocket.se/mobility/search/car?orgId=40265
+  #   email: info.fordbromma@hedinautomotive.se
+  #   phone: "08-586 384 00"
+
+  # - business_id: HEDIN_FORD_NACKA
+  #   name: Hedin Automotive Ford Nacka
+  #   location: Nacka
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7034980
+  #   email: bilforsaljning.fordnacka@hedinautomotive.se
+  #   phone: "08-129 590 00"
+
+  # - business_id: HEDIN_FORD_VARBERG
+  #   name: Hedin Automotive Ford Varberg
+  #   location: Varberg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4293136
+  #   email: info.fordvarberg@hedinautomotive.se
+  #   phone: "034-59 32 00"
+
+  # - business_id: HEDIN_LINKOPING
+  #   name: Hedin Automotive Linköping
+  #   location: Linköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4785786
+  #   email: info.bilvaruhusetlinkoping@hedinautomotive.se
+  #   phone: "013-28 99 00"
+
+  # - business_id: HEDIN_TRUCK_CENTER_HELSINGBORG
+  #   name: Hedin Automotive Truck Center Helsingborg
+  #   location: Helsingborg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=7477435
+  #   email: hedintrucks@hedinautomotive.se
+  #   phone: "042-16 63 90"
+
+  # - business_id: HEDIN_MERCEDES_HALMSTAD
+  #   name: Hedin Automotive Mercedes-Benz Halmstad
+  #   location: Halmstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=3321541
+  #   email: info.halmstad@hedinautomotive.se
+  #   phone: "035-17 61 00"
+
+  # - business_id: HEDIN_VASTERAS
+  #   name: Hedin Automotive Västerås
+  #   location: Västerås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=460437
+  #   email: info.bilvaruhuset.vasteras@hedinautomotive.se
+  #   phone: "021-540 06 00"
+
+  # - business_id: HEDIN_TRELLEBORG
+  #   name: Hedin Automotive Trelleborg
+  #   location: Trelleborg
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2282922
+  #   email: info.trelleborg@hedinautomotive.se
+  #   phone: "0410-48 100"
+
+  # - business_id: HEDIN_OREBRO
+  #   name: Hedin Automotive Örebro
+  #   location: Örebro
+  #   url: https://www.blocket.se/mobility/search/car?orgId=304088
+  #   email: info.orebro@hedinautomotive.se
+  #   phone: "019-16 80 50"
+
+  # - business_id: HEDIN_KARLSKOGA
+  #   name: Hedin Automotive Karlskoga
+  #   location: Karlskoga
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8908508
+  #   email: info.karlskoga@hedinautomotive.se
+  #   phone: "0586-36 45 0"
+
+  # - business_id: HEDIN_STAKET
+  #   name: Hedin Automotive Stäket
+  #   location: Järfälla
+  #   url: https://www.blocket.se/mobility/search/car?orgId=9324768
+  #   email: info.staket@hedinautomotive.se
+  #   phone: "08-586 341 00"
+
+  # - business_id: PORSCHE_GOTEBORG
+  #   name: Porsche Center Göteborg
+  #   location: Mölndal
+  #   url: https://www.blocket.se/mobility/search/car?orgId=2659171
+  #   email: info@porsche-goteborg.se
+  #   phone: "031-385 55 00"
+
+  # - business_id: PORSCHE_JONKOPING
+  #   name: Porsche Center Jönköping
+  #   location: Jönköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8228227
+  #   email: info@porsche-jonkoping.se
+  #   phone: "036-210 10 00"
+
+  # - business_id: PORSCHE_HALMSTAD
+  #   name: Porsche Center Halmstad
+  #   location: Halmstad
+  #   url: https://www.blocket.se/mobility/search/car?orgId=8205992
+  #   email: salj@porsche-halmstad.se
+  #   phone: "035-240 18 00"
+
+  # - business_id: PORSCHE_UMEA
+  #   name: Porsche Center Umeå
+  #   location: Umeå
+  #   url: https://www.blocket.se/mobility/search/car?orgId=4121841
+  #   email: info@porsche-umea.se
+  #   phone: "090-200 01 00"
+
+  # - business_id: PORSCHE_LINKOPING
+  #   name: Porsche Center Linköping
+  #   location: Linköping
+  #   url: https://www.blocket.se/mobility/search/car?orgId=6935563
+  #   email: info@porsche-linkoping.se
+  #   phone: "013-327 01 00"
+
+  # - business_id: PORSCHE_BORAS
+  #   name: Porsche Center Borås
+  #   location: Borås
+  #   url: https://www.blocket.se/mobility/search/car?orgId=5443547
+  #   email: info@porsche-boras.se
+  #   phone: "033-12 95 95"

@@ -1,0 +1,24 @@
+# Core Scraping
+selenium>=4.16.0
+selenium-wire>=5.1.0
+webdriver-manager>=4.0.1
+beautifulsoup4>=4.12.0
+lxml>=5.1.0
+
+# HTTP & Utilities
+requests>=2.31.0
+fake-useragent>=1.4.0
+
+# Database
+pymongo>=4.6.0
+dnspython>=2.4.0
+
+# Configuration & Logging
+python-dotenv>=1.0.0
+loguru>=0.7.0
+
+# Image Processing
+pillow>=10.1.0
+
+# Config (YAML for dealers)
+pyyaml>=6.0

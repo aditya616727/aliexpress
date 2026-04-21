@@ -1,0 +1,20 @@
+services:
+  scraper:
+    build: .
+    image: ad-extractor:latest
+    env_file: .env
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - MONGODB_URI_DEV=${MONGODB_URI_DEV}
+      - MONGODB_URI_PROD=${MONGODB_URI_PROD}
+      - USE_PROXY=${USE_PROXY:-true}
+      - WEBSHARE_API_KEY=${WEBSHARE_API_KEY}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - NUM_SCRAPER_WORKERS=${NUM_SCRAPER_WORKERS:-4}
+      - NUM_CONSUMER_WORKERS=${NUM_CONSUMER_WORKERS:-3}
+      - CONSUMER_BATCH_SIZE=${CONSUMER_BATCH_SIZE:-4}
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+    shm_size: "2gb"
+    restart: "no"
