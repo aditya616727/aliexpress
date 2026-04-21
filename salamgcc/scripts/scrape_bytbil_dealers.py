@@ -223,9 +223,14 @@ def upsert_to_mongo(rows: List[Dict[str, Optional[str]]]) -> int:
     if not mongo_client.connect():
         raise RuntimeError("Failed to connect to MongoDB. Check MONGODB_URI in environment.")
 
-    inserted = 0
+    collection = mongo_client.db["bytbil_dealers"]
+    # Ensure a unique index on source_url to support upsert behaviour
+    collection.create_index([("source_url", 1)], unique=True)
+
+    upserted = 0
     for row in rows:
-        broker_data = {
+        now = datetime.utcnow()
+        doc = {
             "source_site": row["source_site"],
             "source_url": row["source_url"],
             "name": row["dealer_name"],
@@ -233,12 +238,19 @@ def upsert_to_mongo(rows: List[Dict[str, Optional[str]]]) -> int:
             "phone": row["phone"],
             "website": row["website"],
             "address": row["address"],
-            "scraped_at": datetime.utcnow(),
         }
-        if mongo_client.upsert_broker(broker_data):
-            inserted += 1
+        result = collection.update_one(
+            {"source_url": row["source_url"]},
+            {
+                "$set": {**doc, "updated_at": now},
+                "$setOnInsert": {"created_at": now, "scraped_at": now},
+            },
+            upsert=True,
+        )
+        if result.upserted_id or result.modified_count:
+            upserted += 1
     mongo_client.close()
-    return inserted
+    return upserted
 
 
 def scrape_pages(max_pages: int, delay: float) -> List[str]:
