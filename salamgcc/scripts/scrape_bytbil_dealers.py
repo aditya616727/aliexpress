@@ -42,6 +42,7 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 DEALER_URL_PATTERN = re.compile(r"^/(?:handlare|handlare/)[^/]+-\d+$")
 
 SKIP_URL_SUBSTRINGS = [
+    "upphort",
     "-lan",
     "auktoriserad-for",
     "kontakt",
@@ -281,19 +282,44 @@ def upsert_to_mongo(rows: List[Dict[str, Optional[str]]]) -> int:
     return upserted
 
 
+def extract_max_page(soup: BeautifulSoup) -> Optional[int]:
+    """Detect the highest page number from pagination links on the listing page."""
+    max_page = None
+    for a in soup.find_all("a", href=True):
+        href = a["href"]
+        match = re.search(r"Page=(\d+)", href)
+        if match:
+            page_num = int(match.group(1))
+            if max_page is None or page_num > max_page:
+                max_page = page_num
+    return max_page
+
+
 def scrape_pages(max_pages: int, delay: float) -> List[str]:
     session = get_session()
     found_links: List[str] = []
+    total_pages = max_pages
 
     print("  (MRF-certified only, excluding discontinued)")
-    for page in range(1, max_pages + 1):
+    page = 1
+    while page <= total_pages:
         url = LIST_URL if page == 1 else PAGE_URL.format(page)
-        print(f"Loading dealer list page {page}: {url}")
+        print(f"Loading dealer list page {page}/{total_pages}: {url}")
         try:
             soup = get_soup(session, url)
         except Exception as exc:
             print(f"Failed to load page {page}: {exc}")
             break
+
+        # On first page, detect total pages from pagination links
+        if page == 1:
+            detected = extract_max_page(soup)
+            if detected and detected > total_pages:
+                total_pages = detected
+                print(f"  Detected {total_pages} total pages from pagination")
+            elif detected:
+                total_pages = detected
+                print(f"  Detected {total_pages} total pages from pagination")
 
         links = extract_listing_links(soup)
         if not links:
@@ -307,6 +333,13 @@ def scrape_pages(max_pages: int, delay: float) -> List[str]:
 
         found_links.extend(new_links)
         print(f"Found {len(new_links)} new dealer links (total {len(found_links)})")
+
+        # Update total_pages as we go (pagination reveals more pages dynamically)
+        detected = extract_max_page(soup)
+        if detected and detected > total_pages:
+            total_pages = detected
+
+        page += 1
         time.sleep(delay)
 
     return found_links
@@ -329,7 +362,7 @@ def scrape_dealers(dealer_urls: List[str], delay: float) -> List[Dict[str, Optio
 
 def parse_args() -> ArgumentParser:
     parser = ArgumentParser(description="Scrape Bytbil dealer showroom details")
-    parser.add_argument("--max-pages", type=int, default=10, help="Maximum listing pages to crawl")
+    parser.add_argument("--max-pages", type=int, default=200, help="Maximum listing pages to crawl (auto-detects actual total)")
     parser.add_argument("--delay", type=float, default=1.0, help="Delay between requests in seconds")
     parser.add_argument("--output-file", type=str, default="bytbil_dealers.csv", help="CSV file to write")
     parser.add_argument("--no-mongo", action="store_true", help="Skip upserting results into MongoDB")
