@@ -13,6 +13,7 @@ import json
 import re
 import sys
 import time
+from urllib.parse import parse_qs, urlparse, unquote
 from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
@@ -147,6 +148,9 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
         name = jsonld.get("name")
     if not name:
         name = ""
+    # Strip enclosing parentheses from dealer names like "(CJS-Trading)"
+    if name.startswith("(") and ")" in name:
+        name = re.sub(r"^\(([^)]+)\)", r"\1", name).strip()
 
     phone = None
     email = None
@@ -158,7 +162,17 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
             phone = href.replace("tel:", "").strip()
         elif href.startswith("mailto:") and not email:
             email = href.replace("mailto:", "").strip()
-        if phone and email:
+        elif "hitta.se" in href and not address:
+            # Address is encoded in the stsearch param of the hitta.se map link
+            try:
+                parsed = urlparse(href)
+                qs = parse_qs(parsed.query)
+                stsearch = qs.get("stsearch", [None])[0]
+                if stsearch:
+                    address = unquote(stsearch).strip()
+            except Exception:
+                pass
+        if phone and email and address:
             break
 
     if jsonld:
@@ -166,24 +180,25 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
             email = jsonld.get("email")
         if not phone:
             phone = jsonld.get("telephone")
-        address_data = jsonld.get("address")
-        if address_data and isinstance(address_data, dict) and not address:
-            parts = []
-            for key in ("streetAddress", "postalCode", "addressLocality", "addressRegion", "addressCountry"):
-                value = address_data.get(key)
-                if value:
-                    parts.append(str(value).strip())
-            if parts:
-                address = ", ".join(parts)
+        if not address:
+            address_data = jsonld.get("address")
+            if address_data and isinstance(address_data, dict):
+                parts = []
+                for key in ("streetAddress", "postalCode", "addressLocality", "addressRegion", "addressCountry"):
+                    value = address_data.get(key)
+                    if value:
+                        parts.append(str(value).strip())
+                if parts:
+                    address = ", ".join(parts)
 
     if not address:
         address = extract_address_from_text(raw_text)
 
-    if not address:
-        # Try a fallback on a component that looks like street + city
-        match = re.search(r"(\d{2,5} [A-Za-zÅÄÖåäö\s\-]+)", raw_text)
-        if match:
-            address = match.group(1).strip()
+    # Clean up address: remove URLs, phone-like strings, and stray junk
+    if address:
+        address = re.sub(r"https?://\S+", "", address)
+        address = re.sub(r"\b\d{7,}\b", "", address)
+        address = re.sub(r"\s{2,}", " ", address).strip().rstrip(",")
 
     return {
         "dealer_name": name or "",
