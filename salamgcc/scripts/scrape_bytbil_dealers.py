@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Scrape Bytbil showroom dealer details and save to CSV or MongoDB.
+"""Scrape MRF-affiliated Bytbil dealers and save to CSV or MongoDB.
 
-This script scrapes dealer detail pages from https://www.bytbil.com/handlare
-and extracts company name, email, phone, and address.
+This script scrapes only MRF-certified dealer pages from
+https://www.bytbil.com/handlare?IsMRFCertified=True
+and extracts name, email, phone (international format), website, and address.
+
+Discontinued dealers (Upphört) are automatically excluded.
 
 By default it writes results to a CSV file in the repository root.
 Use --mongo to also upsert results into the existing MongoDB broker collection.
@@ -32,8 +35,8 @@ except ImportError:  # pragma: no cover
     mongo_client = None
 
 BASE_URL = "https://www.bytbil.com"
-LIST_URL = "https://www.bytbil.com/handlare"
-PAGE_URL = "https://www.bytbil.com/handlare?page={}"
+LIST_URL = "https://www.bytbil.com/handlare?IsMRFCertified=True"
+PAGE_URL = "https://www.bytbil.com/handlare?Page={}&IsMRFCertified=True"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 DEALER_URL_PATTERN = re.compile(r"^/(?:handlare|handlare/)[^/]+-\d+$")
@@ -55,12 +58,12 @@ SKIP_URL_SUBSTRINGS = [
 ]
 
 CSV_FIELDS = [
-    "source_site",
     "source_url",
-    "dealer_name",
-    "email",
-    "phone",
+    "name",
     "address",
+    "phone",
+    "website",
+    "email",
     "scraped_at",
 ]
 
@@ -94,10 +97,21 @@ def is_dealer_link(href: str, text: str) -> bool:
         return False
     if DEALER_URL_PATTERN.match(href):
         normalized_text = text.strip().lower()
+        # Skip empty text, discontinued (Upphört), and authorized-dealer labels
         if not normalized_text or "upph" in normalized_text or "auktor" in normalized_text:
             return False
         return True
     return False
+
+
+def format_phone_international(phone: str) -> str:
+    """Convert a Swedish phone number to international format (+46...)."""
+    digits = re.sub(r"[^\d]", "", phone)
+    if digits.startswith("0") and len(digits) > 1:
+        digits = "46" + digits[1:]
+    if not digits.startswith("46"):
+        digits = "46" + digits
+    return "+" + digits
 
 
 def extract_listing_links(soup: BeautifulSoup) -> List[str]:
@@ -154,10 +168,12 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
 
     phone = None
     email = None
+    website = None
     address = None
 
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
+        link_text = a.get_text(" ", strip=True).lower()
         if href.startswith("tel:") and not phone:
             phone = href.replace("tel:", "").strip()
         elif href.startswith("mailto:") and not email:
@@ -172,14 +188,18 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
                     address = unquote(stsearch).strip()
             except Exception:
                 pass
-        if phone and email and address:
-            break
+        elif ("besök" in link_text or "webbplats" in link_text) and not website:
+            # "Besök handlarens webbplats" link contains the dealer's own website
+            if "bytbil.com" not in href and "hitta.se" not in href:
+                website = href
 
     if jsonld:
         if not email:
             email = jsonld.get("email")
         if not phone:
             phone = jsonld.get("telephone")
+        if not website:
+            website = jsonld.get("url")
         if not address:
             address_data = jsonld.get("address")
             if address_data and isinstance(address_data, dict):
@@ -200,13 +220,17 @@ def extract_dealer_info(soup: BeautifulSoup, source_url: str) -> Dict[str, Optio
         address = re.sub(r"\b\d{7,}\b", "", address)
         address = re.sub(r"\s{2,}", " ", address).strip().rstrip(",")
 
+    # Convert phone to international format
+    if phone:
+        phone = format_phone_international(phone)
+
     return {
-        "dealer_name": name or "",
-        "email": email or "",
-        "phone": phone or "",
-        "address": address or "",
-        "source_site": "bytbil",
         "source_url": source_url,
+        "name": name or "",
+        "address": address or "",
+        "phone": phone or "",
+        "website": website or "",
+        "email": email or "",
         "scraped_at": datetime.utcnow().isoformat(),
     }
 
@@ -236,12 +260,12 @@ def upsert_to_mongo(rows: List[Dict[str, Optional[str]]]) -> int:
     for row in rows:
         now = datetime.utcnow()
         doc = {
-            "source_site": row["source_site"],
             "source_url": row["source_url"],
-            "name": row["dealer_name"],
-            "email": row["email"],
-            "phone": row["phone"],
+            "name": row["name"],
             "address": row["address"],
+            "phone": row["phone"],
+            "website": row["website"],
+            "email": row["email"],
         }
         result = collection.update_one(
             {"source_url": row["source_url"]},
@@ -261,6 +285,7 @@ def scrape_pages(max_pages: int, delay: float) -> List[str]:
     session = get_session()
     found_links: List[str] = []
 
+    print("  (MRF-certified only, excluding discontinued)")
     for page in range(1, max_pages + 1):
         url = LIST_URL if page == 1 else PAGE_URL.format(page)
         print(f"Loading dealer list page {page}: {url}")
@@ -315,7 +340,7 @@ def main() -> None:
     parser = parse_args()
     args = parser.parse_args()
 
-    print("Starting Bytbil dealer scraper")
+    print("Starting Bytbil MRF-certified dealer scraper")
     dealer_urls = scrape_pages(max_pages=args.max_pages, delay=args.delay)
     if not dealer_urls:
         print("No dealer URLs found. Exiting.")
